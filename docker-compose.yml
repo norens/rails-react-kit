@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: koala_user
+      POSTGRES_PASSWORD: koala_pass
+      POSTGRES_DB: koala_db
+    volumes:
+    - pgdata:/var/lib/postgresql/data
+    ports:
+    - "5432:5432"
+
+  redis:
+    image: redis:7
+    ports:
+    - "6379:6379"
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+    ports:
+    - "2181:2181"
+
+  kafka:
+    image: bitnami/kafka:3.6.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ENABLE_KRAFT: "no"  # ⛔️ ВИМКНУТИ KRaft, вмикає Zookeeper
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+    depends_on:
+      - zookeeper
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+    - ./backend:/app
+    environment:
+      DATABASE_URL: postgres://koala_user:koala_pass@postgres:5432/koala_db
+      REDIS_URL: redis://redis:6379/0
+      KAFKA_BROKER: kafka:9092
+    depends_on:
+    - postgres
+    - redis
+    - kafka
+    ports:
+    - "3000:3000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+    - ./frontend:/app
+    depends_on:
+    - backend
+    ports:
+    - "4173:4173"
+
+  log-service:
+    build:
+      context: ./log-service
+      dockerfile: Dockerfile
+    depends_on:
+    - kafka
+    environment:
+      KAFKA_BROKER: kafka:9092
+
+volumes:
+  pgdata:
