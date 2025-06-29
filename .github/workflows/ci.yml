@@ -49,7 +49,7 @@ jobs:
 
       - name: Set up DB
         run: |
-          cp backend/config/database.yml.ci backend/config/database.yml
+          cp config/database.yml.ci config/database.yml
           bin/rails db:prepare
 
       - name: Run Rubocop
