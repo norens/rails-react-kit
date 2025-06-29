@@ -3,8 +3,6 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     origins do |origin, _env|
       allowed_origins = ENV.fetch('FRONTEND_URL', '').split(',')
       allowed_origins.include?(origin) ? origin : nil
-
-      allowed_origins.include?(origin) ? origin : nil
     end
 
     resource '*',
