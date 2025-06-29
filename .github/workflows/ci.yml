@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: koala_user
+          POSTGRES_PASSWORD: koala_pass
+          POSTGRES_DB: koala_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://koala_user:koala_pass@localhost:5432/koala_db
+      REDIS_URL: redis://localhost:6379/0
+      KAFKA_BROKER: localhost:9092
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+          bundler-cache: true
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libpq-dev
+
+      - name: Set up DB
+        run: |
+          cp config/database.yml.ci config/database.yml
+          bin/rails db:prepare
+
+      - name: Run Rubocop
+        run: bundle exec rubocop --parallel
+
+      - name: Run Brakeman
+        run: bundle exec brakeman -q -w2
+
+      - name: Run ERB Lint
+        run: bundle exec erb_lint .
+
+      - name: Run RSpec
+        run: bundle exec rspec
+
+      - name: Generate Swagger
+        run: bundle exec rake rswag:specs:swaggerize
+
+      - name: Ensure Swagger exists
+        run: test -f swagger/v1/swagger.yaml
