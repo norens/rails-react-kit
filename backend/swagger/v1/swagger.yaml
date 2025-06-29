@@ -1,0 +1,29 @@
+---
+openapi: 3.0.1
+info:
+  title: Koala API
+  version: v1
+  description: This is the API documentation for the Koala project.
+  contact:
+    name: Koala Dev Team
+    email: support@koala.app
+servers:
+- url: http://localhost:3000
+  description: Local dev server
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+- BearerAuth: []
+paths:
+  "/health/ping":
+    get:
+      summary: ping health
+      tags:
+      - Health
+      responses:
+        '200':
+          description: successful

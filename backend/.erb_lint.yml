@@ -1,0 +1,51 @@
+# Configuration for ERB Lint - helps enforce style and formatting rules in ERB templates
+
+linters:
+  FinalNewline:
+    enabled: true
+    # Ensures all files end with a newline
+
+  SpaceAroundErbTag:
+    enabled: true
+    # Adds spaces around ERB tags: <%= ... %> instead of <%=...%>
+
+  TrimWhitespace:
+    enabled: true
+    # Trims whitespace before and after ERB tags
+
+  ErbNewArguments:
+    enabled: true
+    # Warns when using old-style hash arguments in helpers (e.g., instead of `tag(:br, { class: 'x' })`)
+
+  HardCodedString:
+    enabled: false
+    # Warns when strings are not wrapped in I18n t() calls — useful for internationalized apps
+
+  Indentation:
+    enabled: true
+    indent_width: 2
+    # Enforces consistent indentation inside ERB blocks (2 spaces)
+
+  Tab:
+    enabled: true
+    # Disallows use of tab characters; enforces spaces for indentation
+
+  NoJavascriptTagHelper:
+    enabled: true
+    # Prevents use of Rails' `javascript_include_tag` and `javascript_tag`, preferring modern JS bundlers
+
+  NoCommentedOutCode:
+    enabled: true
+    # Detects commented-out Ruby or HTML code and flags it for removal
+
+  TrailingWhitespace:
+    enabled: true
+    # Removes unnecessary trailing whitespace from lines
+
+  ExtraNewline:
+    enabled: true
+    # Prevents multiple blank lines in a row
+
+  DeprecatedClasses:
+    enabled: false
+    # Can be used to detect deprecated CSS utility classes (e.g., Bootstrap v3 -> v5), if configured

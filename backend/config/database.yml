@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: db
+  username: koala_user
+  password: koala_pass
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: koala_db
+
+test:
+  <<: *default
+  database: koala_test
+
+production:
+  <<: *default
+  database: koala_prod
