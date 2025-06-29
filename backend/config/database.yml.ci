@@ -1,7 +1,0 @@
-test:
-  adapter: postgresql
-  encoding: unicode
-  database: koala_db
-  username: koala_user
-  password: koala_pass
-  host: localhost

@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   test:
@@ -17,7 +17,7 @@ jobs:
           POSTGRES_PASSWORD: koala_pass
           POSTGRES_DB: koala_db
         ports:
-          - 5432:5432
+        - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -27,7 +27,7 @@ jobs:
       redis:
         image: redis:7
         ports:
-          - 6379:6379
+        - 6379:6379
 
     env:
       RAILS_ENV: test
@@ -36,36 +36,47 @@ jobs:
       KAFKA_BROKER: localhost:9092
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.2
-          bundler-cache: true
+    - name: Set up DB
+      run: |
+        mkdir -p config
+        cat > config/database.yml <<EOF
+        test:
+          adapter: postgresql
+          encoding: unicode
+          database: koala_db
+          username: koala_user
+          password: koala_pass
+          host: localhost
+          port: 5432
+          pool: 5
+        EOF
+        
+        bin/rails db:prepare
 
-      - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y libpq-dev
+    - name: Install system dependencies
+      run: sudo apt-get update && sudo apt-get install -y libpq-dev
 
-      - name: Set up DB
-        run: |
-          cp config/database.yml.ci config/database.yml
-          bin/rails db:prepare
+    - name: Set up DB
+      run: |
+        cp config/database.yml.ci config/database.yml
+        bin/rails db:prepare
 
-      - name: Run Rubocop
-        run: bundle exec rubocop --parallel
+    - name: Run Rubocop
+      run: bundle exec rubocop --parallel
 
-      - name: Run Brakeman
-        run: bundle exec brakeman -q -w2
+    - name: Run Brakeman
+      run: bundle exec brakeman -q -w2
 
-      - name: Run ERB Lint
-        run: bundle exec erb_lint .
+    - name: Run ERB Lint
+      run: bundle exec erb_lint .
 
-      - name: Run RSpec
-        run: bundle exec rspec
+    - name: Run RSpec
+      run: bundle exec rspec
 
-      - name: Generate Swagger
-        run: bundle exec rake rswag:specs:swaggerize
+    - name: Generate Swagger
+      run: bundle exec rake rswag:specs:swaggerize
 
-      - name: Ensure Swagger exists
-        run: test -f swagger/v1/swagger.yaml
+    - name: Ensure Swagger exists
+      run: test -f swagger/v1/swagger.yaml
