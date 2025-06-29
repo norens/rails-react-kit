@@ -38,7 +38,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+        bundler-cache: true
+
+    - name: Install system dependencies
+      run: sudo apt-get update && sudo apt-get install -y libpq-dev
+
     - name: Set up DB
+      working-directory: backend
       run: |
         mkdir -p config
         cat > config/database.yml <<EOF
@@ -55,28 +65,26 @@ jobs:
         
         bin/rails db:prepare
 
-    - name: Install system dependencies
-      run: sudo apt-get update && sudo apt-get install -y libpq-dev
-
-    - name: Set up DB
-      run: |
-        cp config/database.yml.ci config/database.yml
-        bin/rails db:prepare
-
     - name: Run Rubocop
+      working-directory: backend
       run: bundle exec rubocop --parallel
 
     - name: Run Brakeman
+      working-directory: backend
       run: bundle exec brakeman -q -w2
 
     - name: Run ERB Lint
+      working-directory: backend
       run: bundle exec erb_lint .
 
     - name: Run RSpec
+      working-directory: backend
       run: bundle exec rspec
 
     - name: Generate Swagger
+      working-directory: backend
       run: bundle exec rake rswag:specs:swaggerize
 
     - name: Ensure Swagger exists
+      working-directory: backend
       run: test -f swagger/v1/swagger.yaml
