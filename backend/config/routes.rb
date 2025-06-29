@@ -7,4 +7,8 @@ Rails.application.routes.draw do
   namespace :health do
     get :ping
   end
+
+  namespace :api do
+    get 'hello', to: 'hello#index'
+  end
 end

@@ -12,6 +12,7 @@ gem "redis"
 gem "dotenv-rails"
 gem "ruby-kafka"
 gem "whenever", require: false
+gem 'rack-cors'
 
 group :development, :test do
   gem 'rspec-rails'
