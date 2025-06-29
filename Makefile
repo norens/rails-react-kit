@@ -57,6 +57,9 @@ prune:
 brakeman:
 	docker-compose run --rm backend bundle exec brakeman
 
+lint:
+	docker-compose run --rm backend bundle exec erb_lint --lint-all
+
 # 💡 Help
 help:
 	@echo "🛠️  Makefile Commands:"
@@ -76,10 +79,11 @@ help:
 	@echo "  rspec          - Run backend tests"
 	@echo "  rubocop        - Run RuboCop linter"
 	@echo "  rubocop-fix    - Auto-fix RuboCop offenses"
+	@echo "  brakeman       - Run Brakeman security scanner"
+	@echo "  lint           - Run ERB lint"
 	@echo ""
 	@echo "  swagger        - Generate Swagger docs"
 	@echo "  retry          - Run Kafka retry queue (manual)"
 	@echo ""
 	@echo "  build          - Rebuild all images"
 	@echo "  prune          - Remove all unused Docker data"
-	@echo "  brakeman       - Run Brakeman security scanner"
