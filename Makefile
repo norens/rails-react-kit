@@ -54,6 +54,9 @@ build:
 prune:
 	docker system prune -af
 
+brakeman:
+	docker-compose run --rm backend bundle exec brakeman
+
 # 💡 Help
 help:
 	@echo "🛠️  Makefile Commands:"
@@ -79,3 +82,4 @@ help:
 	@echo ""
 	@echo "  build          - Rebuild all images"
 	@echo "  prune          - Remove all unused Docker data"
+	@echo "  brakeman       - Run Brakeman security scanner"
