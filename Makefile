@@ -36,6 +36,9 @@ rspec:
 rubocop:
 	docker-compose exec backend bundle exec rubocop
 
+rubocop-fix:
+	docker-compose exec backend bundle exec rubocop -A
+
 # 🧪 Swagger
 swagger:
 	docker-compose exec backend rake rswag:specs:swaggerize
@@ -69,6 +72,7 @@ help:
 	@echo ""
 	@echo "  rspec          - Run backend tests"
 	@echo "  rubocop        - Run RuboCop linter"
+	@echo "  rubocop-fix    - Auto-fix RuboCop offenses"
 	@echo ""
 	@echo "  swagger        - Generate Swagger docs"
 	@echo "  retry          - Run Kafka retry queue (manual)"
