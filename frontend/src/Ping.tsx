@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getHello } from "./api";
+import { getHello } from "./api/api.ts";
 
 export default function Ping() {
 	const [message, setMessage] = useState("Loading...");
