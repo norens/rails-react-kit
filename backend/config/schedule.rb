@@ -1,5 +1,7 @@
-set :output, "log/cron.log"
+# frozen_string_literal: true
+
+set :output, 'log/cron.log'
 
 every 5.minutes do
-  rake "kafka:retry"
+  rake 'kafka:retry'
 end

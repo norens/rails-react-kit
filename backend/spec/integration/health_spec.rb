@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+# rubocop:disable all
+
 require 'swagger_helper'
 
 RSpec.describe 'Health Check', type: :request do

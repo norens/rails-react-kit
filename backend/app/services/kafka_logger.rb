@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-require "kafka"
-require "singleton"
-require "json"
+require 'kafka'
+require 'singleton'
+require 'json'
 
 class KafkaLogger
   include Singleton
 
-  DEFAULT_TOPIC = "logs"
+  DEFAULT_TOPIC = 'logs'
 
   def initialize
-    kafka_brokers = ENV.fetch("KAFKA_BROKER", "kafka:9092").split(",")
+    kafka_brokers = ENV.fetch('KAFKA_BROKER', 'kafka:9092').split(',')
 
-    @kafka = Kafka.new(kafka_brokers, client_id: "koala-app")
+    @kafka = Kafka.new(kafka_brokers, client_id: 'koala-app')
 
     @producer = @kafka.async_producer(
       delivery_interval: 5, # flush every 5s
@@ -21,7 +21,7 @@ class KafkaLogger
     )
 
     @default_topic = DEFAULT_TOPIC
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error("[KafkaLogger::InitError] #{e.class}: #{e.message}")
     @producer = nil
   end
@@ -40,7 +40,7 @@ class KafkaLogger
     else
       RedisRetryQueue.enqueue(topic: topic_name, payload: message)
     end
-  rescue => e
+  rescue StandardError => e
     Rails.logger.warn("[KafkaLogger::LogError] #{e.class}: #{e.message}")
     RedisRetryQueue.new.enqueue(message.merge(topic: topic_name))
   end
@@ -50,14 +50,14 @@ class KafkaLogger
   end
 
   def self.deliver_retry_queue
-    kafka_brokers = ENV.fetch("KAFKA_BROKER", "kafka:9092").split(",")
-    kafka = Kafka.new(kafka_brokers, client_id: "koala-app-retry")
+    kafka_brokers = ENV.fetch('KAFKA_BROKER', 'kafka:9092').split(',')
+    kafka = Kafka.new(kafka_brokers, client_id: 'koala-app-retry')
     producer = kafka.producer
 
     while (job = RedisRetryQueue.dequeue)
       begin
         producer.produce(job[:payload].to_json, topic: job[:topic])
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error("[KafkaLogger::RetryError] #{e.class}: #{e.message}")
         RedisRetryQueue.enqueue(**job)
         break
@@ -65,7 +65,7 @@ class KafkaLogger
     end
 
     producer.deliver_messages
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error("[KafkaLogger::RetryFlushError] #{e.class}: #{e.message}")
   end
 end
