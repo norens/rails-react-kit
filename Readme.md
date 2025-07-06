@@ -49,10 +49,27 @@ cd koala-platform
 docker-compose up --build
 ````
 
-Local URLs:
+## 🔗 Local URLs
 
-* Backend: [http://localhost:3000](http://localhost:3000)
-* Frontend: [http://localhost:4173](http://localhost:4173)
+| Сервіс         | Посилання                     | Примітка                          |
+|----------------|-------------------------------|-----------------------------------|
+| 🛠️ Backend API | http://localhost:3000         | Rails API-only backend            |
+| 💻 Frontend    | http://localhost:4173         | Vite + React                      |
+| 🐘 PostgreSQL  | localhost:5432                | DB доступ через psql / PG GUI     |
+| 🧠 Redis       | localhost:6379                | Cache, rate limiting              |
+| 🧾 Swagger UI  | http://localhost:3000/api-docs | Rswag (якщо підключено)          |
+| 📜 Log Metrics | http://localhost:9100/metrics | Prometheus endpoint log-service   |
+| 📈 Prometheus  | http://localhost:9090         | Збір метрик                       |
+| 📊 Grafana     | http://localhost:3001         | Візуалізація, логін: `admin:admin` |
+
+---
+
+## ⚠️ Примітка
+
+- Всі сервіси запускаються локально через `docker-compose`
+- Паролі, логіни і порти конфігуруються через `.env` файли
+
+
 
 ---
 

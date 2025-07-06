@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   mount Rswag::Api::Engine => '/api-docs'
 
   get 'up' => 'rails/health#show', as: :rails_health_check
+  get '/health', to: proc { [200, { 'Content-Type' => 'text/plain' }, ['OK']] }
 
   namespace :health do
     get :ping

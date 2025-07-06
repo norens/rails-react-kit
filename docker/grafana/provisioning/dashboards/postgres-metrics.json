@@ -1,0 +1,51 @@
+{
+	"id": null,
+	"uid": "postgres-metrics",
+	"title": "PostgreSQL Metrics",
+	"schemaVersion": 36,
+	"version": 1,
+	"refresh": "5s",
+	"timezone": "browser",
+	"panels": [
+		{
+			"type": "graph",
+			"title": "Active Connections",
+			"datasource": "Prometheus",
+			"targets": [
+				{
+					"expr": "pg_stat_activity_count",
+					"refId": "A"
+				}
+			],
+			"gridPos": {
+				"x": 0,
+				"y": 0,
+				"w": 24,
+				"h": 6
+			}
+		},
+		{
+			"type": "graph",
+			"title": "Commits & Rollbacks",
+			"datasource": "Prometheus",
+			"targets": [
+				{
+					"expr": "rate(pg_stat_database_xact_commit[1m])",
+					"legendFormat": "Commit",
+					"refId": "B"
+				},
+				{
+					"expr": "rate(pg_stat_database_xact_rollback[1m])",
+					"legendFormat": "Rollback",
+					"refId": "C"
+				}
+			],
+			"gridPos": {
+				"x": 0,
+				"y": 6,
+				"w": 24,
+				"h": 6
+			}
+		}
+	]
+}

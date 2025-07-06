@@ -1,0 +1,70 @@
+{
+	"id": null,
+	"title": "Kafka Lag Monitoring",
+	"uid": "kafka-lag-dashboard",
+	"timezone": "browser",
+	"schemaVersion": 36,
+	"version": 1,
+	"refresh": "5s",
+	"panels": [
+		{
+			"type": "graph",
+			"title": "Kafka Consumer Lag",
+			"datasource": "Prometheus",
+			"targets": [
+				{
+					"expr": "kafka_consumergroup_lag",
+					"legendFormat": "{{topic}} - {{partition}}",
+					"refId": "A"
+				}
+			],
+			"gridPos": {
+				"x": 0,
+				"y": 0,
+				"w": 24,
+				"h": 8
+			}
+		},
+		{
+			"type": "graph",
+			"title": "Messages Consumed Rate",
+			"datasource": "Prometheus",
+			"targets": [
+				{
+					"expr": "rate(kafka_messages_consumed_total[1m])",
+					"legendFormat": "{{group}}",
+					"refId": "B"
+				}
+			],
+			"gridPos": {
+				"x": 0,
+				"y": 8,
+				"w": 24,
+				"h": 8
+			}
+		},
+		{
+			"type": "stat",
+			"title": "Total Partitions",
+			"datasource": "Prometheus",
+			"targets": [
+				{
+					"expr": "count(kafka_topic_partitions)",
+					"refId": "C"
+				}
+			],
+			"gridPos": {
+				"x": 0,
+				"y": 16,
+				"w": 6,
+				"h": 4
+			}
+		}
+	],
+	"templating": {
+		"list": []
+	},
+	"annotations": {
+		"list": []
+	}
+}

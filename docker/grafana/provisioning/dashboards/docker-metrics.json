@@ -1,0 +1,47 @@
+{
+	"id": null,
+	"uid": "docker-metrics",
+	"title": "Docker Metrics",
+	"timezone": "browser",
+	"schemaVersion": 36,
+	"version": 1,
+	"refresh": "5s",
+	"panels": [
+		{
+			"type": "graph",
+			"title": "Container CPU Usage (%)",
+			"datasource": "Prometheus",
+			"targets": [
+				{
+					"expr": "rate(container_cpu_usage_seconds_total[1m]) * 100",
+					"legendFormat": "{{container}}",
+					"refId": "A"
+				}
+			],
+			"gridPos": {
+				"x": 0,
+				"y": 0,
+				"w": 24,
+				"h": 8
+			}
+		},
+		{
+			"type": "graph",
+			"title": "Container Memory Usage (MB)",
+			"datasource": "Prometheus",
+			"targets": [
+				{
+					"expr": "container_memory_usage_bytes / 1024 / 1024",
+					"legendFormat": "{{container}}",
+					"refId": "B"
+				}
+			],
+			"gridPos": {
+				"x": 0,
+				"y": 8,
+				"w": 24,
+				"h": 8
+			}
+		}
+	]
+}

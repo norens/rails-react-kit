@@ -4,7 +4,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'Health Check', type: :request do
-  path '/health/ping' do
+  path '/health' do
     get 'ping health' do
       tags ['Health']
       produces 'application/json'

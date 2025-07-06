@@ -1,18 +1,23 @@
+ENV_FILE ?= development
+
 # 🐘 Docker
 up:
-	docker-compose up --build
+	docker-compose -f docker-compose.yml -f docker-compose.observability.yml --env-file .env.$(ENV_FILE) up --build
+
+dev:
+	docker-compose --env-file .env.$(ENV_FILE) up --build
 
 down:
 	docker-compose down -v
 
 restart:
-	docker-compose down -v && docker-compose up --build
+	docker-compose down -v && docker-compose up --build --env-file .env.$(ENV_FILE)
 
 logs:
-	docker-compose logs -f --tail=100
+	docker-compose logs -f --tail=100 --env-file .env.$(ENV_FILE)
 
 ps:
-	docker-compose ps
+	docker-compose ps --env-file .env.$(ENV_FILE)
 
 # 🛠️ Backend
 console:
@@ -65,6 +70,7 @@ help:
 	@echo "🛠️  Makefile Commands:"
 	@echo ""
 	@echo "  up             - Run all containers"
+	@echo "  dev            - Run all containers with development environment"
 	@echo "  down           - Stop and remove all containers and volumes"
 	@echo "  restart        - Restart all containers with fresh build"
 	@echo "  logs           - Tail logs from all containers"

@@ -19,11 +19,11 @@ components:
 security:
 - BearerAuth: []
 paths:
-  "/health/ping":
+  "/health":
     get:
       summary: ping health
       tags:
-      - Health
+      - - Health
       responses:
         '200':
           description: successful

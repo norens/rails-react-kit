@@ -177,6 +177,8 @@ GEM
       prettyprint
     prettyprint (0.2.0)
     prism (1.4.0)
+    prometheus_exporter (2.2.0)
+      webrick
     pry (0.15.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -315,6 +317,7 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    webrick (1.9.1)
     websocket-driver (0.8.0)
       base64
       websocket-extensions (>= 0.1.0)
@@ -324,7 +327,7 @@ GEM
     zeitwerk (2.7.3)
 
 PLATFORMS
-  x86_64-linux
+  x86_64-linux-gnu
 
 DEPENDENCIES
   bootsnap
@@ -334,6 +337,7 @@ DEPENDENCIES
   factory_bot_rails
   faker
   pg (~> 1.1)
+  prometheus_exporter
   pry-rails
   puma (>= 5.0)
   rack-attack
