@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
           POSTGRES_PASSWORD: koala_pass
           POSTGRES_DB: koala_db
         ports:
-        - 5432:5432
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -27,7 +27,7 @@ jobs:
       redis:
         image: redis:7
         ports:
-        - 6379:6379
+          - 6379:6379
 
     env:
       RAILS_ENV: test
@@ -36,59 +36,80 @@ jobs:
       KAFKA_BROKER: localhost:9092
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.2
-        bundler-cache: true
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+          bundler-cache: true
 
-    - name: Install system dependencies
-      run: sudo apt-get update && sudo apt-get install -y libpq-dev
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libpq-dev
 
-    - name: Install dependencies
-      working-directory: backend
-      run: bundle install
+      - name: Install dependencies
+        working-directory: backend
+        run: bundle install
 
-    - name: Set up DB
-      working-directory: backend
-      run: |
-        mkdir -p config
-        cat > config/database.yml <<EOF
-        test:
-          adapter: postgresql
-          encoding: unicode
-          database: koala_db
-          username: koala_user
-          password: koala_pass
-          host: localhost
-          port: 5432
-          pool: 5
-        EOF
-        
-        bin/rails db:prepare
+      - name: Set up DB
+        working-directory: backend
+        run: |
+          mkdir -p config
+          cat > config/database.yml <<EOF
+          test:
+            adapter: postgresql
+            encoding: unicode
+            database: koala_db
+            username: koala_user
+            password: koala_pass
+            host: localhost
+            port: 5432
+            pool: 5
+          EOF
+          bin/rails db:prepare
 
-    - name: Run Rubocop
-      working-directory: backend
-      run: bundle exec rubocop --parallel
+      - name: Run Rubocop
+        working-directory: backend
+        run: bundle exec rubocop --parallel
 
-    - name: Run Brakeman
-      working-directory: backend
-      run: bundle exec brakeman -q -w2
+      - name: Run Brakeman
+        working-directory: backend
+        run: bundle exec brakeman -q -w2
 
-    - name: Run ERB Lint
-      working-directory: backend
-      run: bundle exec erb_lint .
+      - name: Run ERB Lint
+        working-directory: backend
+        run: bundle exec erb_lint .
 
-    - name: Run RSpec
-      working-directory: backend
-      run: bundle exec rspec
+      - name: Run RSpec
+        working-directory: backend
+        run: bundle exec rspec
 
-    - name: Generate Swagger
-      working-directory: backend
-      run: bundle exec rake rswag:specs:swaggerize
+      - name: Generate Swagger
+        working-directory: backend
+        run: bundle exec rake rswag:specs:swaggerize
 
-    - name: Ensure Swagger exists
-      working-directory: backend
-      run: test -f swagger/v1/swagger.yaml
+      - name: Ensure Swagger exists
+        working-directory: backend
+        run: test -f swagger/v1/swagger.yaml
+
+#  deploy:
+#    needs: test
+#    runs-on: ubuntu-latest
+#    if: github.ref == 'refs/heads/main'
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Set up SSH
+#        uses: webfactory/ssh-agent@v0.8.0
+#        with:
+#          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+#
+#      - name: Deploy to Staging
+#        run: |
+#          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF
+#            cd /home/${{ secrets.SSH_USER }}/koala-platform
+#            git pull origin main
+#            docker compose -f docker-compose.production.yml pull
+#            docker compose -f docker-compose.production.yml up -d --build
+#          EOF
